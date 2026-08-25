@@ -2,147 +2,131 @@
 
 <div class="container my-5">
   <div class="row justify-content-center">
-    <div class="col-lg-7 col-md-9">
+    <div class="col-lg-8">
 
-      <div class="card shadow-sm border-0 rounded-4">
+      <div class="card shadow-sm border-0 rounded-4" style="background: var(--bg-card);">
         <div class="card-body p-4 p-md-5">
 
-          <h2 class="fw-bold mb-1">🏠 List your place</h2>
-          <p class="text-muted mb-4">Fill in the details to add your listing.</p>
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.4rem;">
+              🏠
+            </div>
+            <div>
+              <h2 class="fw-bold mb-0">List Your Place on Wanderlust</h2>
+              <p class="text-muted small mb-0">Join thousands of hosts earning extra income from their homes and villas.</p>
+            </div>
+          </div>
 
-          <form
-            method="POST"
-            action="/listings"
-            novalidate
-            class="needs-validation"
-            enctype="multipart/form-data">
+          <hr class="my-4" style="border-color: var(--border-color) !important;">
 
-            <!-- BASIC INFO -->
-            <h6 class="fw-bold text-uppercase text-muted border-bottom pb-2 mb-3">
-              Basic Info
-            </h6>
+          <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+
+            <!-- ── BASIC DETAILS ── -->
+            <h6 class="fw-bold text-uppercase text-danger small mb-3">1. Basic Information</h6>
 
             <div class="mb-3">
-              <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-              <input
-                name="listing[title]"
-                type="text"
-                class="form-control rounded-3"
-                placeholder="Add a catchy title"
-                required />
-              <div class="invalid-feedback">Please enter a title.</div>
+              <label class="form-label fw-semibold">Property Title <span class="text-danger">*</span></label>
+              <input name="listing[title]" type="text" class="form-control rounded-3 py-2" placeholder="e.g. Luxury Beachfront Villa with Private Infinity Pool" required />
+              <div class="invalid-feedback">Please enter a catchy title for your listing.</div>
             </div>
 
             <div class="mb-3">
               <label class="form-label fw-semibold">Description</label>
-              <textarea
-                name="listing[description]"
-                class="form-control rounded-3"
-                rows="4"
-                placeholder="Describe what makes your place special..."></textarea>
+              <textarea name="listing[description]" class="form-control rounded-3" rows="4" placeholder="Describe the space, architecture, views, nearby attractions, and hospitality..." required></textarea>
+              <div class="invalid-feedback">Please provide a brief description.</div>
             </div>
 
-            <!-- PHOTO -->
-            <h6 class="fw-bold text-uppercase text-muted border-bottom pb-2 mb-3 mt-4">
-              Photo
-            </h6>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Upload Image</label>
-              <input
-                name="listing[image]"
-                type="file"
-                class="form-control rounded-3"
-                accept="image/*"
-                onchange="previewImg(this)" />
-            </div>
-
-            <!-- Image preview -->
-            <div id="imgPreview" class="mb-3" style="display:none;">
-              <img
-                id="prevImg"
-                src=""
-                alt="preview"
-                class="img-fluid rounded-3 w-100"
-                style="max-height:220px; object-fit:cover;" />
-            </div>
-
-            <!-- CATEGORY -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">
-                Category <span class="text-danger">*</span>
-              </label>
-              <select name="listing[category]" class="form-select rounded-3" required>
-                <option value="" disabled selected>-- Select a category --</option>
-                <option value="trending">🔥 Trending</option>
-                <option value="rooms">🛏️ Rooms</option>
-                <option value="iconic-cities">🏙️ Iconic Cities</option>
-                <option value="mountains">⛰️ Mountains</option>
-                <option value="castles">🏰 Castles</option>
-                <option value="amazing-pools">🏊 Amazing Pools</option>
-                <option value="camping">⛺ Camping</option>
-                <option value="farms">🐄 Farms</option>
-                <option value="arctic">❄️ Arctic</option>
-                <option value="domes">🏠 Domes</option>
-                <option value="boats">🚢 Boats</option>
-              </select>
-              <div class="invalid-feedback">Please select a category.</div>
-            </div>
-
-            <!-- PRICING & LOCATION -->
-            <h6 class="fw-bold text-uppercase text-muted border-bottom pb-2 mb-3 mt-4">
-              Pricing & Location
-            </h6>
+            <!-- ── CATEGORY & PHOTO ── -->
+            <h6 class="fw-bold text-uppercase text-danger small mt-4 mb-3">2. Category & Media</h6>
 
             <div class="row g-3 mb-3">
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">
-                  Price/night <span class="text-danger">*</span>
-                </label>
-                <div class="input-group">
-                  <span class="input-group-text">₹</span>
-                  <input
-                    name="listing[price]"
-                    type="number"
-                    min="0"
-                    class="form-control rounded-end-3"
-                    placeholder="0"
-                    required />
-                  <div class="invalid-feedback">Enter a valid price.</div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                <select name="listing[category]" class="form-select rounded-3 py-2" required>
+                  <option value="" disabled selected>-- Select a theme --</option>
+                  <option value="trending">🔥 Trending</option>
+                  <option value="amazing-pools">🏊 Amazing Pools</option>
+                  <option value="mountains">⛰️ Mountains</option>
+                  <option value="iconic-cities">🏙️ Iconic Cities</option>
+                  <option value="castles">🏰 Castles & Heritage</option>
+                  <option value="camping">⛺ Camping & Treehouses</option>
+                  <option value="farms">🐄 Organic Farms</option>
+                  <option value="arctic">❄️ Arctic & Snow</option>
+                  <option value="domes">🏠 Geodesic Domes</option>
+                  <option value="boats">🚢 Luxury Houseboats</option>
+                  <option value="rooms">🛏️ Private Rooms</option>
+                  <option value="luxury">💎 Ultra Luxury</option>
+                </select>
+                <div class="invalid-feedback">Please select a category.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Upload Photo</label>
+                <input name="listing[image]" type="file" class="form-control rounded-3 py-2" accept="image/*" onchange="previewImg(this)" />
+              </div>
+            </div>
+
+            <!-- Photo Preview -->
+            <div id="imgPreview" class="mb-3" style="display: none;">
+              <img id="prevImg" src="" alt="preview" class="img-fluid rounded-3 w-100" style="max-height: 220px; object-fit: cover;" />
+            </div>
+
+            <!-- ── PRICING, ROOMS & CAPACITY ── -->
+            <h6 class="fw-bold text-uppercase text-danger small mt-4 mb-3">3. Capacity & Pricing</h6>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold small">Price / night (₹) *</label>
+                <input name="listing[price]" type="number" min="100" class="form-control rounded-3 py-2" placeholder="2500" required />
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold small">Max Guests</label>
+                <input name="listing[maxGuests]" type="number" min="1" max="50" class="form-control rounded-3 py-2" value="2" />
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold small">Bedrooms</label>
+                <input name="listing[bedrooms]" type="number" min="1" class="form-control rounded-3 py-2" value="1" />
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label fw-semibold small">Bathrooms</label>
+                <input name="listing[bathrooms]" type="number" min="1" class="form-control rounded-3 py-2" value="1" />
+              </div>
+            </div>
+
+            <!-- ── LOCATION ── -->
+            <h6 class="fw-bold text-uppercase text-danger small mt-4 mb-3">4. Location</h6>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">City / Location <span class="text-danger">*</span></label>
+                <input name="listing[location]" type="text" class="form-control rounded-3 py-2" placeholder="e.g. Baga, North Goa" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Country <span class="text-danger">*</span></label>
+                <input name="listing[country]" type="text" class="form-control rounded-3 py-2" placeholder="e.g. India" required />
+              </div>
+            </div>
+
+            <!-- ── AMENITIES ── -->
+            <h6 class="fw-bold text-uppercase text-danger small mt-4 mb-3">5. Amenities Available</h6>
+            <div class="row g-2 mb-4">
+              <% const amenitiesList = ["Wifi", "Swimming Pool", "Air conditioning", "Free parking", "Kitchen", "Dedicated workspace", "Mountain view", "Beach access", "Pet friendly", "Fireplace"]; %>
+              <% amenitiesList.forEach(am => { %>
+                <div class="col-6 col-md-4">
+                  <div class="form-check p-2 border rounded-3 d-flex align-items-center gap-2" style="border-color: var(--border-color) !important;">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" name="listing[amenities]" value="<%= am %>" id="am_<%= am.replace(/\s+/g, '') %>">
+                    <label class="form-check-label small" for="am_<%= am.replace(/\s+/g, '') %>" style="cursor: pointer;"><%= am %></label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-8">
-                <label class="form-label fw-semibold">
-                  Country <span class="text-danger">*</span>
-                </label>
-                <input
-                  name="listing[country]"
-                  type="text"
-                  class="form-control rounded-3"
-                  placeholder="e.g. India"
-                  required />
-                <div class="invalid-feedback">Enter a country.</div>
-              </div>
+              <% }); %>
             </div>
 
-            <div class="mb-4">
-              <label class="form-label fw-semibold">
-                Location / Address <span class="text-danger">*</span>
-              </label>
-              <input
-                name="listing[location]"
-                type="text"
-                class="form-control rounded-3"
-                placeholder="e.g. Baga Beach, North Goa"
-                required />
-              <div class="invalid-feedback">Enter a location.</div>
-            </div>
-
-            <button type="submit" class="btn btn-danger w-100 py-3 fw-bold rounded-3">
-              <i class="fa-solid fa-plus me-2"></i>Create Listing
+            <button type="submit" class="btn btn-danger w-100 py-3 fw-bold rounded-pill shadow" style="background: var(--primary-gradient); border: none; font-size: 1.05rem;">
+              <i class="fa-solid fa-plus me-2"></i> Publish Listing Now
             </button>
 
           </form>
+
         </div>
       </div>
 
@@ -161,16 +145,4 @@
       reader.readAsDataURL(input.files[0]);
     }
   }
-
-  (() => {
-    document.querySelectorAll('.needs-validation').forEach(form => {
-      form.addEventListener('submit', e => {
-        if (!form.checkValidity()) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      });
-    });
-  })();
 </script>

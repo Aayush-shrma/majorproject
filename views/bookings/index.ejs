@@ -1,0 +1,155 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container-fluid px-3 px-md-5 my-5">
+  <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+    <div>
+      <h2 class="fw-bold mb-1" style="color: var(--text-main);">My Trips & Reservations</h2>
+      <p class="text-muted mb-0">Manage your active itineraries, review past stays, and download tax invoices.</p>
+    </div>
+    <a href="/listings" class="btn btn-outline-danger rounded-pill px-4 fw-semibold" style="border-color: var(--primary); color: var(--primary);">
+      <i class="fa-solid fa-compass me-1"></i> Explore More Stays
+    </a>
+  </div>
+
+  <!-- Trips Tabs -->
+  <ul class="nav nav-pills mb-4 gap-2" id="tripsTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active rounded-pill px-4 fw-bold" id="upcoming-tab" data-bs-toggle="pill" data-bs-target="#upcoming" type="button" role="tab">
+        Upcoming Trips (<%= upcoming.length %>)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 fw-bold" id="past-tab" data-bs-toggle="pill" data-bs-target="#past" type="button" role="tab">
+        Past Stays (<%= past.length %>)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 fw-bold" id="cancelled-tab" data-bs-toggle="pill" data-bs-target="#cancelled" type="button" role="tab">
+        Cancelled (<%= cancelled.length %>)
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content" id="tripsTabContent">
+    
+    <!-- ── UPCOMING TRIPS ── -->
+    <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
+      <% if (upcoming.length === 0) { %>
+        <div class="card rounded-4 p-5 text-center border-0 shadow-sm" style="background: var(--bg-card);">
+          <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width: 72px; height: 72px;">
+            <i class="fa-solid fa-suitcase-rolling fs-2 text-muted"></i>
+          </div>
+          <h4 class="fw-bold mb-2">No upcoming trips planned</h4>
+          <p class="text-muted mb-4">Time to dust off your bags and start planning your next great adventure!</p>
+          <a href="/listings" class="btn btn-danger rounded-pill px-4 py-2 fw-bold mx-auto" style="background: var(--primary-gradient); border: none;">
+            Start Exploring
+          </a>
+        </div>
+      <% } else { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <% for (let b of upcoming) { %>
+            <div class="col">
+              <div class="card rounded-4 overflow-hidden shadow-sm h-100 border" style="border-color: var(--border-color) !important; background: var(--bg-card);">
+                
+                <% if (b.listing && b.listing.image) { %>
+                  <img src="<%= b.listing.image.url %>" class="card-img-top" alt="<%= b.listing.title %>" style="height: 180px; object-fit: cover;" />
+                <% } %>
+
+                <div class="card-body p-4 d-flex flex-direction-column">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold">
+                      ● Confirmed
+                    </span>
+                    <span class="text-muted small fw-bold"><%= b.bookingCode %></span>
+                  </div>
+
+                  <h5 class="fw-bold text-truncate mb-1"><%= b.listing ? b.listing.title : 'Listing' %></h5>
+                  <p class="text-muted small mb-3">
+                    <i class="fa-solid fa-location-dot text-danger me-1"></i>
+                    <%= b.listing ? b.listing.location : '' %>
+                  </p>
+
+                  <div class="p-3 rounded-3 bg-light text-dark mb-3 small">
+                    <div class="d-flex justify-content-between mb-1">
+                      <span><strong>Dates:</strong></span>
+                      <span><%= new Date(b.checkIn).toLocaleDateString("en-IN", { day:'numeric', month:'short' }) %> - <%= new Date(b.checkOut).toLocaleDateString("en-IN", { day:'numeric', month:'short', year:'numeric' }) %></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                      <span><strong>Duration:</strong></span>
+                      <span><%= b.nights %> <%= b.nights === 1 ? 'Night' : 'Nights' %> · <%= b.guestsCount %> <%= b.guestsCount === 1 ? 'Guest' : 'Guests' %></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span><strong>Total Paid:</strong></span>
+                      <span class="fw-bold text-danger">&#8377;<%= b.totalPrice.toLocaleString("en-IN") %></span>
+                    </div>
+                  </div>
+
+                  <div class="mt-auto d-flex gap-2">
+                    <a href="/bookings/<%= b._id %>" class="btn btn-dark rounded-pill flex-grow-1 btn-sm fw-semibold">
+                      <i class="fa-solid fa-file-invoice me-1"></i> View Receipt
+                    </a>
+                    
+                    <form action="/bookings/<%= b._id %>/cancel" method="POST" onsubmit="return confirm('Are you sure you want to cancel this reservation? A full refund will be initiated.');">
+                      <button class="btn btn-outline-danger rounded-pill btn-sm fw-semibold" type="submit">
+                        Cancel
+                      </button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- ── PAST STAYS ── -->
+    <div class="tab-pane fade" id="past" role="tabpanel">
+      <% if (past.length === 0) { %>
+        <p class="text-muted py-4 text-center">No past stays recorded yet.</p>
+      <% } else { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <% for (let b of past) { %>
+            <div class="col">
+              <div class="card rounded-4 overflow-hidden shadow-sm h-100 border" style="border-color: var(--border-color) !important; background: var(--bg-card);">
+                <div class="card-body p-4">
+                  <span class="badge bg-secondary rounded-pill px-3 py-1 mb-2">Completed Stay</span>
+                  <h5 class="fw-bold text-truncate mb-1"><%= b.listing ? b.listing.title : 'Listing' %></h5>
+                  <p class="text-muted small mb-2"><%= b.nights %> nights · Paid &#8377;<%= b.totalPrice.toLocaleString("en-IN") %></p>
+                  <a href="/bookings/<%= b._id %>" class="btn btn-outline-secondary btn-sm rounded-pill mt-2">
+                    View Invoice
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- ── CANCELLED TRIPS ── -->
+    <div class="tab-pane fade" id="cancelled" role="tabpanel">
+      <% if (cancelled.length === 0) { %>
+        <p class="text-muted py-4 text-center">No cancelled reservations.</p>
+      <% } else { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          <% for (let b of cancelled) { %>
+            <div class="col">
+              <div class="card rounded-4 p-4 border shadow-sm" style="border-color: var(--border-color) !important; background: var(--bg-card);">
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1 mb-2 align-self-start">
+                  Cancelled & Refunded
+                </span>
+                <h5 class="fw-bold text-truncate mb-1"><%= b.listing ? b.listing.title : 'Listing' %></h5>
+                <p class="text-muted small mb-1">Code: <%= b.bookingCode %></p>
+                <small class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> Refund of &#8377;<%= b.totalPrice.toLocaleString("en-IN") %> Processed</small>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</div>

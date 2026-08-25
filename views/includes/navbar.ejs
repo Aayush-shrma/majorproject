@@ -1,240 +1,178 @@
+<nav class="navbar navbar-expand-md navbar-custom sticky-top">
+  <div class="container-fluid px-3 px-md-5">
 
-<style>
-  .btn:focus,
-  .btn:active,
-  .btn:focus-visible,
-  .dropdown-toggle:focus,
-  .dropdown-toggle:active,
-  .navbar-toggler:focus {
-    box-shadow: none !important;
-    outline: none !important;
-  }
-  #abMenuBtn:focus,
-  #abMenuBtn:active,
-  #abMenuBtn[aria-expanded="true"] {
-    background-color: #f7f7f7 !important;
-    border-color: #ddd !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
-    outline: none !important;
-  }
-  .btn-light:focus,
-  .btn-light:active {
-    background-color: #f7f7f7 !important;
-    box-shadow: none !important;
-    outline: none !important;
-  }
-  .navbar input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  .dropdown-item:hover {
-    background-color: #f7f7f7 !important;
-    color: #222 !important;
-  }
-  .dropdown-item:focus,
-  .dropdown-item:active {
-    background-color: #f7f7f7 !important;
-    color: #222 !important;
-    outline: none !important;
-  }
-</style>
-
-<nav class="navbar navbar-expand-md bg-white border-bottom sticky-top shadow-sm" style="z-index:999;">
-  <div class="container-fluid px-4">
-
-    <!-- LOGO -->
-    <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="/listings">
-       <i class="fa-brands fa-artstation"></i>
+    <!-- ── BRAND LOGO ── -->
+    <a class="brand-logo-wrap" href="/listings">
+      <i class="fa-solid fa-compass brand-logo-icon"></i>
+      <span>Wanderlust</span>
     </a>
 
-    <!-- CENTER SEARCH BAR -->
-    <div class="d-none d-md-flex flex-grow-1 justify-content-center px-4">
+    <!-- ── CENTER EXPANDABLE SEARCH BAR ── -->
+    <div class="d-none d-lg-flex flex-grow-1 justify-content-center px-4">
       <form
         action="/listings"
         method="GET"
-        class="d-flex align-items-stretch bg-white rounded-pill w-100"
-        style="border:1px solid #ddd; box-shadow:0 1px 4px rgba(0,0,0,0.1); max-width:680px; height:48px;">
+        class="search-pill-bar d-flex align-items-center w-100"
+        style="max-width: 620px; height: 50px; padding: 4px 6px;">
 
         <!-- Where -->
-        <div class="d-flex flex-column justify-content-center px-3 flex-grow-1" style="min-width:0;">
-          <div style="font-size:0.62rem; font-weight:800; color:#222; line-height:1;">Where</div>
+        <div class="d-flex flex-column justify-content-center px-3 flex-grow-1" style="min-width: 0;">
+          <label class="search-field-label">Where</label>
           <input
             type="text"
             name="search"
-            placeholder="Search destinations"
+            placeholder="Search destinations, cities, or stays..."
             value="<%= typeof search !== 'undefined' ? search : '' %>"
-            class="border-0 p-0 bg-transparent"
-            style="font-size:0.82rem; color:#717171; outline:none; width:100%; box-shadow:none;"
+            class="search-field-input"
             autocomplete="off" />
         </div>
 
-        <div class="my-2 flex-shrink-0" style="width:1px; background:#ddd;"></div>
+        <div style="width: 1px; height: 28px; background: var(--border-color);" class="flex-shrink-0"></div>
 
-        <!-- When -->
-        <div class="d-flex flex-column justify-content-center px-3 flex-grow-1" style="min-width:110px;">
-          <div style="font-size:0.62rem; font-weight:800; color:#222; line-height:1;">When</div>
-          <input
-            type="text"
-            name="when"
-            placeholder="Add dates"
-            class="border-0 p-0 bg-transparent"
-            style="font-size:0.82rem; color:#717171; outline:none; width:100%; box-shadow:none;" />
-        </div>
-
-        <div class="my-2 flex-shrink-0" style="width:1px; background:#ddd;"></div>
-
-        <!-- Who -->
-        <div class="d-flex flex-column justify-content-center px-3" style="min-width:90px;">
-          <div style="font-size:0.62rem; font-weight:800; color:#222; line-height:1;">Who</div>
+        <!-- Guests -->
+        <div class="d-flex flex-column justify-content-center px-3" style="min-width: 110px;">
+          <label class="search-field-label">Guests</label>
           <input
             type="number"
             name="guests"
-            placeholder="Add guests"
             min="1"
-            class="border-0 p-0 bg-transparent"
-            style="font-size:0.82rem; color:#717171; outline:none; width:80px; box-shadow:none;" />
+            max="20"
+            placeholder="Add guests"
+            value="<%= typeof query !== 'undefined' && query.guests ? query.guests : '' %>"
+            class="search-field-input" />
         </div>
 
         <!-- Search Button -->
-        <button
-          type="submit"
-          class="btn d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 m-1"
-          style="width:38px; height:38px; background:#ff385c; color:#fff; border:none;
-                 box-shadow:none !important; outline:none !important;">
-          <i class="fa-solid fa-magnifying-glass" style="font-size:0.85rem;"></i>
+        <button type="submit" class="search-submit-btn flex-shrink-0" title="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-
       </form>
     </div>
 
-    <!-- RIGHT SIDE -->
-    <div class="d-flex align-items-center gap-1 ms-auto">
+    <!-- ── RIGHT CONTROLS & USER MENU ── -->
+    <div class="d-flex align-items-center gap-2 gap-md-3 ms-auto">
 
-      <!-- Become a host -->
-      <a href="/listings/new"
-         class="d-none d-md-block text-decoration-none fw-semibold text-dark px-3 py-2 rounded-pill"
-         style="font-size:0.88rem; transition:background 0.15s;"
-         onmouseover="this.style.background='#f7f7f7'"
-         onmouseout="this.style.background='transparent'">
-        Become a host
-      </a>
-
-      <!-- Globe -->
+      <!-- Advanced Filter Trigger Button -->
       <button
-        class="btn border-0 rounded-circle d-flex align-items-center justify-content-center"
-        style="width:38px; height:38px; background:transparent;
-               box-shadow:none !important; outline:none !important;"
-        onmouseover="this.style.background='#f7f7f7'"
-        onmouseout="this.style.background='transparent'">
-        <i class="fa-solid fa-globe text-dark"></i>
+        class="btn btn-outline-secondary rounded-pill px-3 py-2 d-flex align-items-center gap-2"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#filterModal"
+        style="font-size: 0.85rem; font-weight: 600; border-color: var(--border-color); color: var(--text-main);">
+        <i class="fa-solid fa-sliders"></i>
+        <span class="d-none d-sm-inline">Filters</span>
       </button>
 
-      <!-- Hamburger + Avatar dropdown -->
+      <!-- Theme Switcher (Dark / Light Mode) -->
+      <button
+        class="btn rounded-circle d-flex align-items-center justify-content-center"
+        id="themeToggleBtn"
+        type="button"
+        title="Toggle Theme"
+        style="width: 40px; height: 40px; border: 1px solid var(--border-color); color: var(--text-main); background: var(--bg-card);">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+
+      <!-- Wishlist Heart Shortcut (if logged in) -->
+      <% if (currUser) { %>
+        <a
+          href="/wishlists"
+          class="btn rounded-circle position-relative d-flex align-items-center justify-content-center"
+          title="Wishlists"
+          style="width: 40px; height: 40px; border: 1px solid var(--border-color); color: var(--primary); background: var(--bg-card);">
+          <i class="fa-solid fa-heart"></i>
+          <% if (typeof wishlistCount !== 'undefined' && wishlistCount > 0) { %>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="navWishlistBadge" style="font-size: 0.65rem;">
+              <%= wishlistCount %>
+            </span>
+          <% } %>
+        </a>
+      <% } %>
+
+      <!-- Host CTA -->
+      <a href="/listings/new" class="d-none d-md-block text-decoration-none fw-semibold px-3 py-2 rounded-pill" style="font-size: 0.88rem; color: var(--text-main);">
+        Host your home
+      </a>
+
+      <!-- User Dropdown Menu -->
       <div class="dropdown">
         <button
-          class="btn bg-white border d-flex align-items-center gap-2 rounded-pill px-3 py-2"
+          class="btn user-menu-btn"
           type="button"
-          id="abMenuBtn"
+          id="userMenuDropdown"
           data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="border-color:#ddd !important;
-                 box-shadow:none !important;
-                 outline:none !important;
-                 transition: box-shadow 0.2s;">
-          <i class="fa-solid fa-bars text-dark" style="font-size:0.85rem;"></i>
-          <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-semibold"
-               style="width:28px; height:28px; font-size:0.8rem;">
-            <% if(currUser) { %>
+          aria-expanded="false">
+          <i class="fa-solid fa-bars" style="font-size: 0.9rem;"></i>
+          <div class="user-avatar-badge">
+            <% if (currUser) { %>
               <%= currUser.username[0].toUpperCase() %>
             <% } else { %>
-              <i class="fa-solid fa-user" style="font-size:0.7rem;"></i>
+              <i class="fa-solid fa-user" style="font-size: 0.75rem;"></i>
             <% } %>
           </div>
         </button>
 
-        <!-- DROPDOWN MENU -->
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2 py-2"
-            style="min-width:260px;">
-
-          <!-- ✅ Help Centre — linked -->
-          <li>
-            <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/help">
-              <i class="fa-regular fa-circle-question text-secondary"></i>
-              Help Centre
-            </a>
-          </li>
-
-          <li><hr class="dropdown-divider my-1"></li>
-
-          <!-- Become a host promo -->
-          <li>
-            <a class="dropdown-item d-flex align-items-center justify-content-between gap-2 py-3"
-               href="/listings/new">
-              <div>
-                <div class="fw-bold" style="font-size:0.9rem;">Become a host</div>
-                <div class="text-muted" style="font-size:0.78rem; line-height:1.4;">
-                  It's easy to start hosting and<br>earn extra income.
-                </div>
-              </div>
-              <img
-                src="https://a0.muscache.com/im/pictures/airbnb-platform-assets/AirbnbPlatformAssets-1.0/Hosting_illustration.png"
-                onerror="this.style.display='none'"
-                alt="host"
-                style="width:48px; height:48px; object-fit:contain; flex-shrink:0;" />
-            </a>
-          </li>
-
-          <li><hr class="dropdown-divider my-1"></li>
-
-    
-          <li>
-            <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/refer-host">
-              <i class="fa-solid fa-user-group text-secondary"></i>
-              Refer a host
-            </a>
-          </li>
-
-     
-          <li>
-            <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/co-host">
-              <i class="fa-solid fa-handshake text-secondary"></i>
-              Find a co-host
-            </a>
-          </li>
-
-          <li><hr class="dropdown-divider my-1"></li>
-
-          <!-- Auth links -->
-          <% if(!currUser) { %>
+        <ul class="dropdown-menu dropdown-menu-end rounded-4 py-2 mt-2" style="min-width: 250px;">
+          <% if (!currUser) { %>
             <li>
-              <a class="dropdown-item d-flex align-items-center gap-3 py-3 fw-bold" href="/signup">
-                <i class="fa-solid fa-user-plus text-secondary"></i>
-                Sign up
+              <a class="dropdown-item fw-bold py-2 d-flex align-items-center gap-3" href="/signup">
+                <i class="fa-solid fa-user-plus text-primary"></i> Sign up
               </a>
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/login">
-                <i class="fa-solid fa-right-to-bracket text-secondary"></i>
-                Log in
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/login">
+                <i class="fa-solid fa-right-to-bracket text-secondary"></i> Log in
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/help">
+                <i class="fa-regular fa-circle-question text-muted"></i> Help Centre
+              </a>
+            </li>
+          <% } else { %>
+            <li class="px-3 py-2 border-bottom mb-1">
+              <div class="fw-bold" style="font-size: 0.92rem;"><%= currUser.username %></div>
+              <small class="text-muted"><%= currUser.email %></small>
+            </li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3 fw-semibold" href="/bookings">
+                <i class="fa-solid fa-suitcase-rolling text-primary"></i> My Trips & Bookings
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/wishlists">
+                <i class="fa-solid fa-heart text-danger"></i> Wishlists
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/dashboard">
+                <i class="fa-solid fa-chart-line text-success"></i> Host Analytics Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/bookings/host/manage">
+                <i class="fa-solid fa-calendar-check text-info"></i> Manage Reservations
+              </a>
+            </li>
+            <li><hr class="dropdown-divider my-1"></li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/listings/new">
+                <i class="fa-solid fa-house-chimney-medical text-primary"></i> List a new property
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3" href="/help">
+                <i class="fa-regular fa-circle-question text-muted"></i> Help Centre
+              </a>
+            </li>
+            <li><hr class="dropdown-divider my-1"></li>
+            <li>
+              <a class="dropdown-item py-2 d-flex align-items-center gap-3 text-danger fw-semibold" href="/logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Log out
               </a>
             </li>
           <% } %>
-
-          <% if(currUser) { %>
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/listings/new">
-                <i class="fa-solid fa-house-chimney text-secondary"></i>
-                Add your home
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-3 py-3" href="/logout">
-                <i class="fa-solid fa-right-from-bracket text-secondary"></i>
-                Log out
-              </a>
-            </li>
-          <% } %>
-
         </ul>
       </div>
 

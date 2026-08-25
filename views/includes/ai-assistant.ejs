@@ -1,0 +1,63 @@
+<!-- Floating AI Assistant Launcher Button -->
+<button class="ai-floating-btn" id="aiLaunchBtn" title="Ask WanderBot AI">
+  <i class="fa-solid fa-wand-magic-sparkles"></i>
+  <span>Ask WanderBot AI</span>
+</button>
+
+<!-- Floating AI Chat Window -->
+<div class="ai-chat-window" id="aiChatWindow">
+  
+  <!-- Header -->
+  <div class="ai-chat-header">
+    <div class="d-flex align-items-center gap-2">
+      <div class="rounded-circle bg-white text-danger d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px;">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <div>
+        <div class="fw-bold" style="font-size: 0.95rem; line-height: 1.2;">WanderBot AI</div>
+        <small class="text-white-50" style="font-size: 0.72rem;">Smart Travel & Itinerary Concierge</small>
+      </div>
+    </div>
+    <button class="btn btn-sm text-white border-0 p-1" id="aiCloseBtn">
+      <i class="fa-solid fa-xmark fs-5"></i>
+    </button>
+  </div>
+
+  <!-- Quick Suggestion Chips -->
+  <div class="p-2 border-bottom d-flex gap-2 overflow-x-auto" style="background: var(--bg-card); scrollbar-width: none;">
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Beachfront villas in Goa under ₹5,000">
+      🏖️ Beach Goa &lt; ₹5k
+    </button>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Plan a 3-day itinerary for Manali">
+      ⛰️ Manali 3-Day Plan
+    </button>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Romantic cabin retreats with mountain views">
+      ✨ Romantic Cabins
+    </button>
+  </div>
+
+  <!-- Chat Messages Feed -->
+  <div class="ai-chat-messages" id="aiChatMessages">
+    <div class="ai-msg ai-msg-bot">
+      👋 Hello! I'm <strong>WanderBot AI</strong>, your personalized travel assistant. Ask me to find verified stays within your budget, plan customized 3-day trip itineraries, or recommend top places!
+    </div>
+  </div>
+
+  <!-- Chat Input Footer -->
+  <div class="ai-chat-footer">
+    <form id="aiChatForm" class="d-flex align-items-center gap-2">
+      <input
+        type="text"
+        id="aiChatInput"
+        class="form-control rounded-pill px-3 py-2"
+        placeholder="Ask for stays, budget tips, itineraries..."
+        style="font-size: 0.88rem;"
+        autocomplete="off"
+        required />
+      <button type="submit" class="btn btn-danger rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px; background: var(--primary-gradient); border: none;">
+        <i class="fa-solid fa-paper-plane" style="font-size: 0.85rem;"></i>
+      </button>
+    </form>
+  </div>
+
+</div>

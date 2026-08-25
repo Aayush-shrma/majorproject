@@ -1,13 +1,13 @@
 {
-  "name": "roamly",
-  "version": "1.0.0",
-  "description": "Airbnb clone project",
+  "name": "wanderlust",
+  "version": "2.0.0",
+  "description": "Wanderlust 2.0 - Next-Gen Property Hosting, Smart Booking & AI Travel Ecosystem",
+  "main": "app.js",
   "type": "commonjs",
-  "engines": {
-    "node": "20.x"
-  },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "seed": "node init/index.js"
   },
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.16.2",

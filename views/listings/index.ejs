@@ -1,237 +1,305 @@
- <% layout("layouts/boilerplate") %>
-    <%= success %>
+<% layout("layouts/boilerplate") %>
 
-
-
-<style>
-  .cat-bar-wrapper {
-    background: #fff; border-bottom: 1px solid #ebebeb;
-    display: flex; align-items: center; padding: 0 12px;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .cat-bar { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; flex: 1; }
-  .cat-bar::-webkit-scrollbar { display: none; }
-  .cat-item {
-    display: flex; flex-direction: column; align-items: center;
-    gap: 6px; padding: 16px 16px 12px; cursor: pointer;
-    border-bottom: 2px solid transparent; color: #717171;
-    font-size: 0.72rem; font-weight: 500; white-space: nowrap;
-    transition: color 0.15s; text-decoration: none; flex-shrink: 0;
-  }
-  .cat-item i { font-size: 1.25rem; }
-  .cat-item:hover { color: #222; border-bottom: 2px solid #b0b0b0; }
-  .cat-item.active { color: #222; border-bottom: 2px solid #222; font-weight: 700; }
-  .cat-scroll-btn {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #fff; border: 1px solid #ddd;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 0.75rem; color: #222; flex-shrink: 0;
-  }
-  .listing-link { text-decoration: none; color: inherit; }
-  .listing-img-wrap {
-    position: relative; border-radius: 16px;
-    overflow: hidden; aspect-ratio: 1 / 1; background: #f0f0f0;
-  }
-  .listing-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
-  .listing-link:hover .listing-img-wrap img { transform: scale(1.03); }
-  .listing-heart {
-    position: absolute; top: 12px; right: 12px;
-    background: transparent; border: none; cursor: pointer;
-    font-size: 1.4rem; text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    transition: transform 0.2s; z-index: 2; padding: 0; line-height: 1;
-  }
-  .listing-heart:hover { transform: scale(1.2); }
-  .listing-heart .fa-heart { color: rgba(255,255,255,0.9); transition: color 0.2s; }
-  .listing-heart.liked .fa-heart { color: #ff385c; }
-  .listing-heart.liked .fa-regular { display: none; }
-  .listing-heart:not(.liked) .fa-solid { display: none; }
-  .listing-title {
-    font-size: 0.95rem; font-weight: 700; color: #222;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    flex: 1; min-width: 0;
-  }
-  .listing-location { font-size: 0.82rem; color: #717171; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tax-info { display: none; }
-  .heart-toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    background: #222; color: #fff; padding: 12px 24px; border-radius: 30px;
-    font-size: 0.88rem; font-weight: 500; z-index: 9999; opacity: 0;
-    transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
-  }
-  .heart-toast.show { opacity: 1; }
-</style>
-
-<!-- CATEGORY BAR -->
+<!-- ── CATEGORY BAR ── -->
 <div class="cat-bar-wrapper">
-  <button class="cat-scroll-btn" onclick="scrollCat(-200)">
+  <button class="cat-scroll-btn d-none d-md-flex" onclick="scrollCat(-220)" title="Scroll Left">
     <i class="fa-solid fa-chevron-left"></i>
   </button>
+
   <div class="cat-bar" id="catBar">
-    <a class="cat-item <%= !category ? 'active' : '' %>" href="/listings">
-      <i class="fa-solid fa-house"></i>All
+    <a class="cat-item <%= !category || category === 'all' ? 'active' : '' %>" href="/listings">
+      <i class="fa-solid fa-border-all"></i>
+      <span>All Stays</span>
     </a>
-    <a class="cat-item <%= category==='trending' ? 'active':'' %>" href="/listings?category=trending">
-      <i class="fa-solid fa-fire"></i>Trending
+    <a class="cat-item <%= category === 'trending' ? 'active' : '' %>" href="/listings?category=trending">
+      <i class="fa-solid fa-fire"></i>
+      <span>Trending</span>
     </a>
-    <a class="cat-item <%= category==='rooms' ? 'active':'' %>" href="/listings?category=rooms">
-      <i class="fa-solid fa-bed"></i>Rooms
+    <a class="cat-item <%= category === 'amazing-pools' ? 'active' : '' %>" href="/listings?category=amazing-pools">
+      <i class="fa-solid fa-person-swimming"></i>
+      <span>Amazing Pools</span>
     </a>
-    <a class="cat-item <%= category==='iconic-cities' ? 'active':'' %>" href="/listings?category=iconic-cities">
-      <i class="fa-solid fa-mountain-city"></i>Iconic Cities
+    <a class="cat-item <%= category === 'mountains' ? 'active' : '' %>" href="/listings?category=mountains">
+      <i class="fa-solid fa-mountain"></i>
+      <span>Mountains</span>
     </a>
-    <a class="cat-item <%= category==='mountains' ? 'active':'' %>" href="/listings?category=mountains">
-      <i class="fa-solid fa-mountain"></i>Mountains
+    <a class="cat-item <%= category === 'iconic-cities' ? 'active' : '' %>" href="/listings?category=iconic-cities">
+      <i class="fa-solid fa-city"></i>
+      <span>Iconic Cities</span>
     </a>
-    <a class="cat-item <%= category==='castles' ? 'active':'' %>" href="/listings?category=castles">
-      <i class="fa-brands fa-fort-awesome"></i>Castles
+    <a class="cat-item <%= category === 'castles' ? 'active' : '' %>" href="/listings?category=castles">
+      <i class="fa-brands fa-fort-awesome"></i>
+      <span>Castles</span>
     </a>
-    <a class="cat-item <%= category==='amazing-pools' ? 'active':'' %>" href="/listings?category=amazing-pools">
-      <i class="fa-solid fa-person-swimming"></i>Amazing Pools
+    <a class="cat-item <%= category === 'camping' ? 'active' : '' %>" href="/listings?category=camping">
+      <i class="fa-solid fa-campground"></i>
+      <span>Camping</span>
     </a>
-    <a class="cat-item <%= category==='camping' ? 'active':'' %>" href="/listings?category=camping">
-      <i class="fa-solid fa-campground"></i>Camping
+    <a class="cat-item <%= category === 'farms' ? 'active' : '' %>" href="/listings?category=farms">
+      <i class="fa-solid fa-cow"></i>
+      <span>Farms</span>
     </a>
-    <a class="cat-item <%= category==='farms' ? 'active':'' %>" href="/listings?category=farms">
-      <i class="fa-solid fa-cow"></i>Farms
+    <a class="cat-item <%= category === 'arctic' ? 'active' : '' %>" href="/listings?category=arctic">
+      <i class="fa-regular fa-snowflake"></i>
+      <span>Arctic</span>
     </a>
-    <a class="cat-item <%= category==='arctic' ? 'active':'' %>" href="/listings?category=arctic">
-      <i class="fa-regular fa-snowflake"></i>Arctic
+    <a class="cat-item <%= category === 'domes' ? 'active' : '' %>" href="/listings?category=domes">
+      <i class="fa-solid fa-igloo"></i>
+      <span>Domes</span>
     </a>
-    <a class="cat-item <%= category==='domes' ? 'active':'' %>" href="/listings?category=domes">
-      <i class="fa-solid fa-igloo"></i>Domes
-    </a>
-    <a class="cat-item <%= category==='boats' ? 'active':'' %>" href="/listings?category=boats">
-      <i class="fa-solid fa-ship"></i>Boats
+    <a class="cat-item <%= category === 'boats' ? 'active' : '' %>" href="/listings?category=boats">
+      <i class="fa-solid fa-ship"></i>
+      <span>Houseboats</span>
     </a>
   </div>
-  <button class="cat-scroll-btn" onclick="scrollCat(200)">
+
+  <button class="cat-scroll-btn d-none d-md-flex" onclick="scrollCat(220)" title="Scroll Right">
     <i class="fa-solid fa-chevron-right"></i>
   </button>
-  <div class="border rounded-pill px-3 py-2 ms-3 d-flex align-items-center"
-       style="white-space:nowrap; flex-shrink:0; font-size:0.84rem;">
+
+  <!-- Tax Toggle Switch -->
+  <div class="d-none d-lg-flex align-items-center ms-3 ps-3 border-start" style="border-color: var(--border-color) !important; white-space: nowrap;">
     <div class="form-check form-switch mb-0">
-      <input class="form-check-input" type="checkbox" role="switch" id="taxSwitch">
-      <label class="form-check-label ms-1" for="taxSwitch">Display total after taxes</label>
+      <input class="form-check-input" type="checkbox" role="switch" id="taxSwitch" style="cursor: pointer;">
+      <label class="form-check-label ms-1 text-muted" for="taxSwitch" style="font-size: 0.84rem; cursor: pointer;">
+        Display total with taxes
+      </label>
     </div>
   </div>
 </div>
 
-<!-- SEARCH RESULT INFO -->
-<% if (search && search.trim() !== '') { %>
-  <div class="container-fluid px-4 px-md-5 mt-3 mb-1">
-    <div class="d-flex align-items-center justify-content-between">
-      <p class="text-muted mb-0" style="font-size:0.9rem;">
-        <% if (allListings.length > 0) { %>
-          <strong class="text-dark"><%= allListings.length %></strong>
-          result<%= allListings.length > 1 ? 's' : '' %> for
-          "<strong class="text-dark"><%= search %></strong>"
+<!-- ── SEARCH / FILTER INFO BAR ── -->
+<div class="container-fluid px-3 px-md-5 mt-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+    
+    <div>
+      <h4 class="fw-bold mb-1" style="color: var(--text-main);">
+        <% if (category && category !== 'all') { %>
+          <span class="text-capitalize"><%= category.replace('-', ' ') %></span> Stays
+        <% } else if (search && search.trim() !== '') { %>
+          Stays in "<%= search %>"
         <% } else { %>
-          No results for "<strong class="text-dark"><%= search %></strong>"
+          Explore Extraordinary Homes
         <% } %>
+      </h4>
+      <p class="text-muted small mb-0">
+        Showing <strong><%= allListings.length %></strong> verified <%= allListings.length === 1 ? 'place' : 'places' %> to stay
       </p>
-      <a href="/listings" class="btn btn-sm btn-outline-dark rounded-pill px-3">
-        <i class="fa-solid fa-xmark me-1"></i> Clear
+    </div>
+
+    <!-- Right Controls: Sort & Map Toggle -->
+    <div class="d-flex align-items-center gap-2">
+      <!-- Map / Grid Toggle Button -->
+      <button class="btn btn-outline-dark rounded-pill px-3 py-2 d-flex align-items-center gap-2" id="toggleMapBtn" style="font-size: 0.85rem; font-weight: 600; border-color: var(--border-color); color: var(--text-main);">
+        <i class="fa-solid fa-map-location-dot text-primary"></i>
+        <span id="mapBtnText">Show Map</span>
+      </button>
+
+      <!-- Clear filters if active -->
+      <% if ((search && search.trim() !== '') || (typeof query !== 'undefined' && (query.minPrice || query.maxPrice || query.bedrooms || query.amenities))) { %>
+        <a href="/listings" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-semibold">
+          <i class="fa-solid fa-rotate-left me-1"></i> Reset Filters
+        </a>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── INTERACTIVE MAP VIEW CONTAINER (Hidden by default, toggled via button) ── -->
+<div class="container-fluid px-3 px-md-5 mt-4" id="allListingsMapContainer" style="display: none;">
+  <div class="card rounded-4 border-0 shadow-sm overflow-hidden" style="height: 580px;">
+    <div id="allListingsMap" style="height: 100%; width: 100%;"></div>
+  </div>
+</div>
+
+<!-- ── LISTINGS GRID ── -->
+<div class="container-fluid px-3 px-md-5 mt-4 pb-5" id="listingsGridContainer">
+  <% if (allListings.length === 0) { %>
+    <div class="text-center py-5">
+      <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+        <i class="fa-solid fa-magnifying-glass fs-2 text-muted"></i>
+      </div>
+      <h4 class="fw-bold mb-2">No matching properties found</h4>
+      <p class="text-muted mb-4">Try adjusting your filters, searching for a different destination, or reset to explore all stays.</p>
+      <a href="/listings" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold" style="background: var(--primary-gradient); border: none;">
+        View All Listings
       </a>
     </div>
-  </div>
-<% } %>
-
-<!-- LISTINGS GRID -->
-<div class="container-fluid px-4 px-md-5 mt-4 pb-5">
-  <% if (allListings.length === 0) { %>
-    <div class="text-center py-5 text-muted">
-      <i class="fa-solid fa-magnifying-glass fa-3x mb-3 d-block" style="color:#ddd;"></i>
-      <h4 class="fw-bold text-dark">No listings found</h4>
-      <p>Try a different category or <a href="/listings" class="text-dark fw-semibold">view all</a></p>
-    </div>
   <% } else { %>
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-      <% for (let listing of allListings) { %>
-        <%
-          let avgRating = null;
-          try {
-            if (listing.reviews && listing.reviews.length > 0) {
-              let valid = listing.reviews.filter(r => r && r.rating != null && !isNaN(Number(r.rating)));
-              if (valid.length > 0) {
-                let total = valid.reduce((s, r) => s + Number(r.rating), 0);
-                let avg = total / valid.length;
-                avgRating = isNaN(avg) ? null : avg.toFixed(1);
-              }
-            }
-          } catch(e) { avgRating = null; }
-        %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <% for (let listing of allListings) { 
+        const isSaved = userWishlistIds && userWishlistIds.includes(listing._id.toString());
+        const avgRating = listing.avgRating || (listing.reviews && listing.reviews.length > 0 ? (listing.reviews.reduce((s, r) => s + (r.rating||5), 0) / listing.reviews.length).toFixed(1) : null);
+        const priceWithTax = Math.round(listing.price * 1.18);
+      %>
         <div class="col">
-          <a href="/listings/<%= listing._id %>" class="listing-link">
-            <div class="listing-img-wrap">
-              <img src="<%= listing.image.url %>" alt="<%= listing.title %>" loading="lazy" />
-              <button class="listing-heart" onclick="toggleHeart(event, this)"
-                      data-logged-in="<%= currUser ? 'true' : 'false' %>">
-                <i class="fa-regular fa-heart"></i>
-                <i class="fa-solid fa-heart"></i>
+          <div class="listing-card-modern">
+            <div class="listing-img-container">
+              <a href="/listings/<%= listing._id %>">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>" loading="lazy" />
+              </a>
+
+              <!-- Category Badge -->
+              <span class="listing-category-badge">
+                <%= listing.category || 'Trending' %>
+              </span>
+
+              <!-- Wishlist Heart Button -->
+              <button
+                class="listing-heart-btn <%= isSaved ? 'is-saved' : '' %>"
+                type="button"
+                title="<%= isSaved ? 'Remove from wishlist' : 'Save to wishlist' %>"
+                onclick="toggleWishlist(event, '<%= listing._id %>', this)">
+                <i class="<%= isSaved ? 'fa-solid fa-heart' : 'fa-regular fa-heart' %>"></i>
               </button>
             </div>
-            <div class="mt-2 px-1">
-              <div class="d-flex align-items-center justify-content-between gap-2">
-                <div class="listing-title"><%= listing.title %></div>
-                <div class="d-flex align-items-center gap-1 flex-shrink-0"
-                     style="font-size:0.82rem; font-weight:600; color:#222;">
-                  <% if (avgRating !== null) { %>
-                    <i class="fa-solid fa-star" style="font-size:0.75rem;"></i>
-                    <%= avgRating %>
-                  <% } else { %>
-                    <span class="text-muted fw-normal" style="font-size:0.78rem;">New</span>
-                  <% } %>
+
+            <!-- Card Info -->
+            <div class="listing-info-body">
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                <a href="/listings/<%= listing._id %>" class="listing-card-title flex-grow-1">
+                  <%= listing.title %>
+                </a>
+                <div class="d-flex align-items-center gap-1 flex-shrink-0 fw-bold small">
+                  <i class="fa-solid fa-star text-warning" style="font-size: 0.75rem;"></i>
+                  <span><%= avgRating ? avgRating : 'New' %></span>
                 </div>
               </div>
-              <div class="listing-location mt-1"><%= listing.location %>, <%= listing.country %></div>
-              <div class="mt-1" style="font-size:0.9rem; color:#222;">
-                <strong>&#8377;<%= listing.price.toLocaleString("en-IN") %></strong> /night
-                <i class="tax-info text-muted" style="font-size:0.8rem;">&nbsp;+18% GST</i>
+
+              <div class="listing-card-location">
+                <i class="fa-solid fa-location-dot text-danger me-1" style="font-size: 0.75rem;"></i>
+                <%= listing.location %>, <%= listing.country %>
+              </div>
+
+              <div class="listing-card-specs">
+                <span><%= listing.bedrooms || 1 %> bed · <%= listing.bathrooms || 1 %> bath · Up to <%= listing.maxGuests || 2 %> guests</span>
+              </div>
+
+              <div class="listing-card-price">
+                <div>
+                  <span class="price-bold price-base">&#8377;<%= listing.price.toLocaleString("en-IN") %></span>
+                  <span class="price-bold price-tax" style="display: none;">&#8377;<%= priceWithTax.toLocaleString("en-IN") %></span>
+                  <span class="text-muted small"> /night</span>
+                </div>
+                <span class="badge bg-light text-dark border small fw-normal price-tax-badge" style="display: none;">inc. GST</span>
               </div>
             </div>
-          </a>
+          </div>
         </div>
       <% } %>
     </div>
   <% } %>
 </div>
 
-<div class="heart-toast" id="heartToast"></div>
-
+<!-- ── CLIENT SCRIPT FOR INDEX PAGE ── -->
 <script>
   function scrollCat(amount) {
     document.getElementById('catBar').scrollBy({ left: amount, behavior: 'smooth' });
   }
-  document.getElementById("taxSwitch").addEventListener("click", () => {
-    document.querySelectorAll(".tax-info").forEach(el => {
-      el.style.display = el.style.display === "inline" ? "none" : "inline";
+
+  // Tax Switcher
+  const taxSwitch = document.getElementById("taxSwitch");
+  if (taxSwitch) {
+    taxSwitch.addEventListener("change", () => {
+      const showTax = taxSwitch.checked;
+      document.querySelectorAll(".price-base").forEach(el => el.style.display = showTax ? "none" : "inline");
+      document.querySelectorAll(".price-tax").forEach(el => el.style.display = showTax ? "inline" : "none");
+      document.querySelectorAll(".price-tax-badge").forEach(el => el.style.display = showTax ? "inline-block" : "none");
     });
-  });
-  function toggleHeart(event, btn) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (btn.dataset.loggedIn !== 'true') {
-      window.location.href = '/login';
-      return;
-    }
-    const isLiked = btn.classList.contains('liked');
-    if (isLiked) {
-      btn.classList.remove('liked');
-      btn.querySelectorAll('.fa-heart').forEach(i => i.style.color = 'rgba(255,255,255,0.9)');
-      showToast('🤍 Removed from wishlist');
-    } else {
-      btn.classList.add('liked');
-      btn.querySelector('.fa-solid.fa-heart').style.color = '#ff385c';
-      showToast('❤️ Saved to wishlist');
-      btn.style.transform = 'scale(1.4)';
-      setTimeout(() => btn.style.transform = 'scale(1)', 200);
-    }
   }
-  function showToast(msg) {
-    const toast = document.getElementById('heartToast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2000);
+
+  // Map View vs Grid View Toggle
+  const toggleMapBtn = document.getElementById("toggleMapBtn");
+  const mapBtnText = document.getElementById("mapBtnText");
+  const mapContainer = document.getElementById("allListingsMapContainer");
+  const gridContainer = document.getElementById("listingsGridContainer");
+  let mapInitialized = false;
+  let indexMap = null;
+
+  if (toggleMapBtn) {
+    toggleMapBtn.addEventListener("click", async () => {
+      const isMapHidden = mapContainer.style.display === "none";
+      if (isMapHidden) {
+        mapContainer.style.display = "block";
+        gridContainer.style.display = "none";
+        mapBtnText.textContent = "Show List";
+        toggleMapBtn.querySelector('i').className = "fa-solid fa-list text-primary";
+
+        // Initialize Map if not yet created
+        if (!mapInitialized) {
+          initIndexMap();
+          mapInitialized = true;
+        } else if (indexMap) {
+          indexMap.invalidateSize();
+        }
+      } else {
+        mapContainer.style.display = "none";
+        gridContainer.style.display = "block";
+        mapBtnText.textContent = "Show Map";
+        toggleMapBtn.querySelector('i').className = "fa-solid fa-map-location-dot text-primary";
+      }
+    });
+  }
+
+  async function initIndexMap() {
+    try {
+      const res = await fetch('/api/listings/geo');
+      const data = await res.json();
+      
+      const mapElem = document.getElementById('allListingsMap');
+      if (!mapElem || !window.L) return;
+
+      indexMap = L.map('allListingsMap').setView([20.5937, 78.9629], 5); // Center India / World
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(indexMap);
+
+      const bounds = [];
+
+      if (data.features && data.features.length > 0) {
+        data.features.forEach(f => {
+          const coords = f.geometry.coordinates;
+          const lat = coords[1];
+          const lng = coords[0];
+          bounds.push([lat, lng]);
+
+          const p = f.properties;
+          const pricePinHtml = `
+            <div style="background-color: white; border: 1px solid #ddd; border-radius: 20px; padding: 4px 10px; font-weight: 800; font-size: 0.8rem; color: #222; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; cursor: pointer;">
+              ₹${p.price.toLocaleString('en-IN')}
+            </div>
+          `;
+
+          const pinIcon = L.divIcon({
+            className: 'custom-price-pin',
+            html: pricePinHtml,
+            iconSize: [60, 24],
+            iconAnchor: [30, 12]
+          });
+
+          const popupContent = `
+            <div style="font-family: 'Plus Jakarta Sans', sans-serif; width: 180px;">
+              <img src="${p.imageUrl}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;" />
+              <strong style="font-size: 0.88rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</strong>
+              <div style="color: #666; font-size: 0.75rem;">${p.location}</div>
+              <div style="font-weight: bold; color: #ff385c; margin-top: 4px;">₹${p.price.toLocaleString('en-IN')} /night</div>
+              <a href="/listings/${p.id}" class="btn btn-sm btn-danger w-100 mt-2 rounded-pill" style="font-size: 0.75rem; background: #ff385c; border:none;">View Place</a>
+            </div>
+          `;
+
+          L.marker([lat, lng], { icon: pinIcon })
+            .addTo(indexMap)
+            .bindPopup(popupContent);
+        });
+
+        if (bounds.length > 0) {
+          indexMap.fitBounds(bounds, { padding: [50, 50] });
+        }
+      }
+    } catch (e) {
+      console.log('Map init notice:', e.message);
+    }
   }
 </script>

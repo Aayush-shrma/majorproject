@@ -1,0 +1,87 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container-fluid px-3 px-md-5 my-5">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+    <div>
+      <h2 class="fw-bold mb-1" style="color: var(--text-main);">My Saved Wishlists</h2>
+      <p class="text-muted mb-0">Your favorite handpicked luxury stays, unique homes, and bucket-list destinations.</p>
+    </div>
+    <a href="/listings" class="btn btn-outline-danger rounded-pill px-4 fw-semibold" style="border-color: var(--primary); color: var(--primary);">
+      <i class="fa-solid fa-compass me-1"></i> Explore More
+    </a>
+  </div>
+
+  <% if (savedListings.length === 0) { %>
+    <div class="card rounded-4 p-5 text-center border-0 shadow-sm" style="background: var(--bg-card);">
+      <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+        <i class="fa-regular fa-heart fs-2 text-danger"></i>
+      </div>
+      <h4 class="fw-bold mb-2">Your wishlist is empty</h4>
+      <p class="text-muted mb-4">As you search, tap the heart icon on any property to save your favorite stays here.</p>
+      <a href="/listings" class="btn btn-danger rounded-pill px-4 py-2 fw-bold mx-auto" style="background: var(--primary-gradient); border: none;">
+        Start Exploring Stays
+      </a>
+    </div>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <% for (let listing of savedListings) { 
+        const avgRating = listing.avgRating || (listing.reviews && listing.reviews.length > 0 ? (listing.reviews.reduce((s, r) => s + (r.rating||5), 0) / listing.reviews.length).toFixed(1) : null);
+      %>
+        <div class="col">
+          <div class="listing-card-modern">
+            <div class="listing-img-container">
+              <a href="/listings/<%= listing._id %>">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>" loading="lazy" />
+              </a>
+
+              <span class="listing-category-badge">
+                <%= listing.category || 'Trending' %>
+              </span>
+
+              <button
+                class="listing-heart-btn is-saved"
+                type="button"
+                title="Remove from wishlist"
+                onclick="toggleWishlist(event, '<%= listing._id %>', this); this.closest('.col').remove();">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+            </div>
+
+            <div class="listing-info-body">
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                <a href="/listings/<%= listing._id %>" class="listing-card-title flex-grow-1">
+                  <%= listing.title %>
+                </a>
+                <div class="d-flex align-items-center gap-1 flex-shrink-0 fw-bold small">
+                  <i class="fa-solid fa-star text-warning" style="font-size: 0.75rem;"></i>
+                  <span><%= avgRating ? avgRating : '5.0' %></span>
+                </div>
+              </div>
+
+              <div class="listing-card-location">
+                <i class="fa-solid fa-location-dot text-danger me-1" style="font-size: 0.75rem;"></i>
+                <%= listing.location %>, <%= listing.country %>
+              </div>
+
+              <div class="listing-card-specs">
+                <span><%= listing.bedrooms || 1 %> bed · Up to <%= listing.maxGuests || 2 %> guests</span>
+              </div>
+
+              <div class="listing-card-price">
+                <div>
+                  <span class="price-bold">&#8377;<%= listing.price.toLocaleString("en-IN") %></span>
+                  <span class="text-muted small"> /night</span>
+                </div>
+                <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold" style="background: var(--primary-gradient); border: none; font-size: 0.8rem;">
+                  Book Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+
+</div>
