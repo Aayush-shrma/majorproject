@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync");
-const { isLoggedIn, validateBooking } = require("../middleware.js");
+const { isLoggedIn, validateBooking } = require("../middlewares.js");
 const bookingController = require("../controllers/bookings.js");
 
 // Guest Bookings List ("My Trips")
