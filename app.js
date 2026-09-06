@@ -15,6 +15,9 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+const Listing = require("./models/listing.js");
+const Review = require("./models/review.js");
+const Booking = require("./models/booking.js");
 
 // Routes
 const listingRouter = require("./routes/listing.js");
@@ -276,7 +279,19 @@ app.all("*", (req, res, next) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something went wrong!" } = err;
-    res.status(statusCode).render("error.ejs", { message });
+    console.error("Server error:", err.message || err);
+    res.locals.currUser = res.locals.currUser || req.user || null;
+    res.locals.success = res.locals.success || [];
+    res.locals.error = res.locals.error || [];
+    res.locals.wishlistCount = res.locals.wishlistCount || 0;
+    res.locals.search = res.locals.search || "";
+    res.locals.mapToken = res.locals.mapToken || process.env.MAP_TOKEN || "";
+    try {
+        res.status(statusCode).render("error.ejs", { message: err.message || message });
+    } catch (renderError) {
+        console.error("Failed to render error.ejs:", renderError.message);
+        res.status(statusCode).send(`<h2>Error ${statusCode}</h2><p>${err.message || message}</p><p><a href="/listings">Return to Listings</a></p>`);
+    }
 });
 
 // Start server if executed directly (Render, local, VPS)
