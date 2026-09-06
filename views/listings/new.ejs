@@ -141,12 +141,19 @@
 <script>
   function previewImg(input) {
     if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (file.size > 4.5 * 1024 * 1024) {
+        alert("⚠️ Photo file size is over 4.5 MB. Please choose a smaller image (or enter an image URL) for fast uploading.");
+        input.value = "";
+        document.getElementById('imgPreview').style.display = 'none';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = e => {
         document.getElementById('prevImg').src = e.target.result;
         document.getElementById('imgPreview').style.display = 'block';
       };
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(file);
     }
   }
 </script>

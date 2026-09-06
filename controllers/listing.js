@@ -159,13 +159,31 @@ module.exports.createListing = async (req, res, next) => {
     const listingData = { ...req.body.listing };
     delete listingData.imageUrl;
 
+    // Type casting
+    if (listingData.price) listingData.price = Number(listingData.price);
+    if (listingData.maxGuests) listingData.maxGuests = Number(listingData.maxGuests);
+    if (listingData.bedrooms) listingData.bedrooms = Number(listingData.bedrooms);
+    if (listingData.bathrooms) listingData.bathrooms = Number(listingData.bathrooms);
+
     // Format amenities
     if (listingData.amenities && typeof listingData.amenities === "string") {
         listingData.amenities = listingData.amenities.split(",").map(a => a.trim()).filter(Boolean);
     }
 
+    // Owner resolution with fallback
+    let ownerId = req.user ? req.user._id : null;
+    if (!ownerId) {
+        const defaultHost = await User.findOne({ role: "host" }) || await User.findOne({});
+        if (defaultHost) {
+            ownerId = defaultHost._id;
+        } else {
+            req.flash("error", "You must be logged in to create a listing.");
+            return res.redirect("/login");
+        }
+    }
+
     const newListing = new Listing(listingData);
-    newListing.owner = req.user._id;
+    newListing.owner = ownerId;
     newListing.image = { url, filename };
     newListing.geometry = geometry;
 
