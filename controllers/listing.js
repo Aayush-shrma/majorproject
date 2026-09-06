@@ -148,12 +148,16 @@ module.exports.createListing = async (req, res, next) => {
     let url = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=60";
     let filename = "listingimage";
 
-    if (req.file) {
+    if (req.file && req.file.path) {
         url = req.file.path;
-        filename = req.file.filename;
+        filename = req.file.filename || "listingimage";
+    } else if (req.body.listing && req.body.listing.imageUrl && req.body.listing.imageUrl.trim()) {
+        url = req.body.listing.imageUrl.trim();
+        filename = "custom_url";
     }
 
     const listingData = { ...req.body.listing };
+    delete listingData.imageUrl;
 
     // Format amenities
     if (listingData.amenities && typeof listingData.amenities === "string") {
@@ -188,6 +192,8 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateListing = async (req, res) => {
     let { id } = req.params;
     const listingData = { ...req.body.listing };
+    const customUrl = listingData.imageUrl && listingData.imageUrl.trim();
+    delete listingData.imageUrl;
 
     // Format amenities
     if (listingData.amenities && typeof listingData.amenities === "string") {
@@ -196,10 +202,13 @@ module.exports.updateListing = async (req, res) => {
 
     let listing = await Listing.findByIdAndUpdate(id, listingData, { new: true });
 
-    if (typeof req.file !== "undefined") {
+    if (typeof req.file !== "undefined" && req.file && req.file.path) {
         let url = req.file.path;
-        let filename = req.file.filename;
+        let filename = req.file.filename || "listingimage";
         listing.image = { url, filename };
+        await listing.save();
+    } else if (customUrl) {
+        listing.image = { url: customUrl, filename: "custom_url" };
         await listing.save();
     }
 

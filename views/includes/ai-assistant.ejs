@@ -26,20 +26,26 @@
   <!-- Quick Suggestion Chips -->
   <div class="p-2 border-bottom d-flex gap-2 overflow-x-auto" style="background: var(--bg-card); scrollbar-width: none;">
     <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Beachfront villas in Goa under ₹5,000">
-      🏖️ Beach Goa &lt; ₹5k
+      🏖️ Goa &lt; ₹5k
     </button>
     <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Plan a 3-day itinerary for Manali">
       ⛰️ Manali 3-Day Plan
     </button>
-    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Romantic cabin retreats with mountain views">
-      ✨ Romantic Cabins
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="Plan 3 days in Kashmir">
+      🛶 Kashmir Trip
+    </button>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="What is your cancellation and refund policy?">
+      🛡️ Cancellation Policy
+    </button>
+    <button class="btn btn-sm btn-outline-secondary rounded-pill text-nowrap py-1 px-3 ai-chip" data-prompt="How do I list my property as a host?">
+      🏠 How to Host
     </button>
   </div>
 
   <!-- Chat Messages Feed -->
   <div class="ai-chat-messages" id="aiChatMessages">
     <div class="ai-msg ai-msg-bot">
-      👋 Hello! I'm <strong>WanderBot AI</strong>, your personalized travel assistant. Ask me to find verified stays within your budget, plan customized 3-day trip itineraries, or recommend top places!
+      👋 Hello! I'm <strong>WanderBot AI</strong>, your personalized travel concierge. Ask me to find verified stays within your budget, generate detailed 3-day itineraries, or answer any questions about booking and hosting!
     </div>
   </div>
 
@@ -50,7 +56,7 @@
         type="text"
         id="aiChatInput"
         class="form-control rounded-pill px-3 py-2"
-        placeholder="Ask for stays, budget tips, itineraries..."
+        placeholder="Ask for stays, budget, itineraries, FAQs..."
         style="font-size: 0.88rem;"
         autocomplete="off"
         required />

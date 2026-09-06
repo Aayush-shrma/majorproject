@@ -36,8 +36,16 @@
               <div class="mb-2">
                 <img src="<%= originalImageUrl %>" class="img-fluid rounded-3" style="max-height: 180px; object-fit: cover;" alt="listing" />
               </div>
-              <label class="form-label fw-semibold small">Upload New Image (Optional)</label>
-              <input name="listing[image]" type="file" class="form-control rounded-3 py-2" accept="image/*" />
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Upload New Image File (Optional)</label>
+                  <input name="listing[image]" type="file" class="form-control rounded-3 py-2" accept="image/*" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold small">Or Enter New Photo URL</label>
+                  <input name="listing[imageUrl]" type="url" class="form-control rounded-3 py-2" placeholder="https://images.unsplash.com/..." />
+                </div>
+              </div>
             </div>
 
             <!-- ── CATEGORY ── -->

@@ -9,12 +9,23 @@ const multer = require("multer");
 const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
 
+const safeUpload = (req, res, next) => {
+    upload.single("listing[image]")(req, res, (err) => {
+        if (err) {
+            console.warn("Image upload notice:", err.message);
+            req.flash("error", `Photo upload notice: ${err.message}. Default image will be used.`);
+            return next();
+        }
+        next();
+    });
+};
+
 router
   .route("/")
   .get(wrapAsync(listingController.index))
   .post(
     isLoggedIn,
-    upload.single("listing[image]"),
+    safeUpload,
     wrapAsync(listingController.createListing)
   );
 
@@ -33,7 +44,7 @@ router
   .put(
     isLoggedIn,
     isOwner,
-    upload.single("listing[image]"),
+    safeUpload,
     wrapAsync(listingController.updateListing)
   )
   .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroy));
