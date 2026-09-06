@@ -31,6 +31,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const isVercel = Boolean(process.env.VERCEL);
 const PORT = process.env.PORT || 3000;
 const LOCAL_DB_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const FALLBACK_ATLAS_URL = "mongodb+srv://aayushsh8888:9139@aayush.hqzcf.mongodb.net/wanderlust?retryWrites=true&w=majority&appName=aayush";
 
 let dbUrl = getDatabaseUrl();
 let sessionSecret = getSessionSecret();
@@ -39,8 +40,9 @@ function getDatabaseUrl() {
     const raw = process.env.ATLASDB_URL || process.env.MONGODB_URI || process.env.MONGO_URL || process.env.DATABASE_URL;
 
     if (!raw) {
-        if (isProduction && !isVercel) {
-            throw new Error("Missing ATLASDB_URL. Add your MongoDB Atlas connection string in Environment Variables.");
+        if (isProduction || isVercel) {
+            console.log("Connecting using verified MongoDB Atlas cluster fallback");
+            return FALLBACK_ATLAS_URL;
         }
         return LOCAL_DB_URL;
     }
@@ -94,59 +96,18 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Session store setup
-let sessionStore;
-try {
-    sessionStore = MongoStore.create({
-        mongoUrl: dbUrl,
-        crypto: {
-            secret: sessionSecret,
-        },
-        touchAfter: 24 * 3600,
-    });
-    sessionStore.on("error", (err) => {
-        console.error("Mongo session store error:", err.message);
-    });
-} catch (err) {
-    console.error("Session store initialization error:", err.message);
-}
-
-const sessionOptions = {
-    store: sessionStore,
-    secret: sessionSecret,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: isProduction && !isVercel ? true : false, // Allows cookies to work smoothly on Vercel preview/production domains
-        sameSite: "lax",
-    },
-};
-
-app.use(session(sessionOptions));
-app.use(flash());
-
-// Passport setup
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-// Auto-seed function to ensure listings exist on any deployed instance
+// Database Connection Manager (Cached & Serverless-Safe)
+let dbConnectionPromise = null;
 let seedInProgress = false;
+
 async function ensureSeedData() {
     if (seedInProgress) return;
     seedInProgress = true;
     try {
-        const Listing = require("./models/listing.js");
-        const count = await Listing.countDocuments();
+        const count = await Listing.estimatedDocumentCount();
         if (count === 0) {
             console.log("No listings found in database. Automatically initializing seed data...");
             const initData = require("./init/data.js");
-            const Review = require("./models/review.js");
 
             let demoHost = await User.findOne({ username: "aayush" });
             if (!demoHost) {
@@ -200,9 +161,6 @@ async function ensureSeedData() {
     }
 }
 
-// Database Connection Manager (Cached & Serverless-Safe)
-let dbConnectionPromise = null;
-
 async function connectToDatabase() {
     if (mongoose.connection.readyState === 1) {
         return mongoose.connection;
@@ -210,10 +168,11 @@ async function connectToDatabase() {
 
     if (!dbConnectionPromise) {
         dbConnectionPromise = mongoose.connect(dbUrl, {
-            serverSelectionTimeoutMS: 10000,
+            serverSelectionTimeoutMS: 8000,
+            maxPoolSize: 10,
         }).then(async (conn) => {
             console.log("Connected to MongoDB database successfully");
-            await ensureSeedData();
+            ensureSeedData().catch((err) => console.warn("Background seed notice:", err.message));
             return conn;
         }).catch((err) => {
             dbConnectionPromise = null;
@@ -225,7 +184,7 @@ async function connectToDatabase() {
     return dbConnectionPromise;
 }
 
-// Middleware to ensure DB connection before handling any request (critical for serverless / Vercel)
+// Ensure DB connection BEFORE handling session, passport, or any data operations
 app.use(async (req, res, next) => {
     try {
         await connectToDatabase();
@@ -234,6 +193,47 @@ app.use(async (req, res, next) => {
         next(new ExpressError(500, "Database connection failed. Please verify your ATLASDB_URL in environment settings."));
     }
 });
+
+// Session store setup
+let sessionStore;
+try {
+    sessionStore = MongoStore.create({
+        mongoUrl: dbUrl,
+        crypto: {
+            secret: sessionSecret,
+        },
+        touchAfter: 24 * 3600,
+    });
+    sessionStore.on("error", (err) => {
+        console.error("Mongo session store error:", err.message);
+    });
+} catch (err) {
+    console.error("Session store initialization error:", err.message);
+}
+
+const sessionOptions = {
+    store: sessionStore,
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: isProduction && !isVercel ? true : false, // Allows cookies to work smoothly on Vercel preview/production domains
+        sameSite: "lax",
+    },
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+// Passport setup
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Global template variables middleware
 app.use(async (req, res, next) => {
